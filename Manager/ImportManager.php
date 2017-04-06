@@ -115,14 +115,14 @@ class ImportManager
         $inputFormat    = $this->getFormat($processorAlias);
         $importJob      = $this->getJob($processorAlias, $jobName, self::VALIDATION_IMPORT_TYPE);
 
-        $this->importHandler->saveImportingFile($file, $processorAlias, $inputFormat);
+        $filePath = $this->importHandler->saveImportingFile($file, $processorAlias, $inputFormat);
 
         $entityName = $this->processorRegistry
             ->getProcessorEntityName(ProcessorRegistry::TYPE_IMPORT_VALIDATION, $processorAlias);
         $existingAliases = $this->processorRegistry
             ->getProcessorAliasesByEntity(ProcessorRegistry::TYPE_IMPORT_VALIDATION, $entityName);
 
-        $validationResult  = $this->getImportResult($importJob, $processorAlias, $inputFormat, self::VALIDATION_IMPORT_TYPE);
+        $validationResult  = $this->getImportResult($importJob, $processorAlias, $filePath, self::VALIDATION_IMPORT_TYPE);
         $validationResult['showStrategy'] = count($existingAliases) > 1;
 
         return $validationResult;
@@ -194,16 +194,17 @@ class ImportManager
      *
      * @param string $processorAlias
      * @param string $jobName
+     * @param string $filePath
      *
      * @return array
      */
-    public function importExecution($processorAlias, $jobName)
+    public function importExecution($processorAlias, $jobName, $filePath)
     {
         $jobName = $this->getJob($processorAlias, $jobName, self::EXECUTION_IMPORT_TYPE);
         $inputFormat = $this->getFormat($processorAlias);
-
+        //$filePath = $this->get
         // Execute the import
-        $result  = $this->getImportResult($jobName, $processorAlias, $inputFormat, self::EXECUTION_IMPORT_TYPE);
+        $result  = $this->getImportResult($jobName, $processorAlias, $filePath, self::EXECUTION_IMPORT_TYPE);
 
         // Update schema if Attribute import
         if ($processorAlias == self::ATTRIBUTE_PROCESSOR) {
@@ -276,24 +277,23 @@ class ImportManager
      *
      * @param string $jobName
      * @param string $processorAlias
-     * @param string $inputFormat
+     * @param string $filePath
      * @param string $importType
      *
      * @return array
      */
-    protected function getImportResult($jobName, $processorAlias, $inputFormat, $importType = self::VALIDATION_IMPORT_TYPE)
+    protected function getImportResult($jobName, $processorAlias, $filePath, $importType = self::VALIDATION_IMPORT_TYPE)
     {
         $options = [
             'delimiter' => $this->configManager->get('synolia_oroneo.delimiter'),
             'enclosure' => $this->configManager->get('synolia_oroneo.enclosure'),
+            'filePath'  => $filePath,
         ];
 
         if ($importType == self::VALIDATION_IMPORT_TYPE) {
             return $this->importHandler->handleImportValidation(
                 $jobName,
                 $processorAlias,
-                $inputFormat,
-                null,
                 $options
             );
         }
@@ -301,8 +301,6 @@ class ImportManager
         return $this->importHandler->handleImport(
             $jobName,
             $processorAlias,
-            $inputFormat,
-            null,
             $options
         );
     }

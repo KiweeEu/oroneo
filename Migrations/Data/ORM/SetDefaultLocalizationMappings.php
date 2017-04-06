@@ -40,7 +40,7 @@ class SetDefaultLocalizationMappings extends AbstractFixture implements Containe
         $configManager->set(
             'synolia_oroneo.localization_mapping',
             [
-                new MappingLocalization('en_US', 'default'),
+                new MappingLocalization('en_GB', 'default'),
             ]
         );
         $configManager->flush();

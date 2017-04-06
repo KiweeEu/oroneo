@@ -101,6 +101,7 @@ class MappingManager
     {
         $fieldMappings        = $this->getFieldMappings();
         $localizationMappings = $this->getLocalizationMappings();
+        $defaultLocalization = $this->getDefaultLocalization();
 
         $mappings = [];
         /** @var MappingConfig[] $fieldMappings */
@@ -112,6 +113,9 @@ class MappingManager
                     $mappings[$fieldMapping->getAkeneoField().'-'.$localizationMapping->getAkeneoLocalization()] =
                         $fieldMapping->getOroField().':'.$localizationMapping->getOroLocalization().':'.$fieldMapping->getOroEntityField();
                 }
+
+                // default value (no locale)
+                $mappings[$fieldMapping->getAkeneoField().'-'.$defaultLocalization->getAkeneoLocalization()] = $fieldMapping->getOroField().'::'.$fieldMapping->getOroEntityField();
             } elseif (!empty($fieldMapping->getOroEntityField())) {
                 $mappings[$fieldMapping->getAkeneoField()] = $fieldMapping->getOroField().':'.$fieldMapping->getOroEntityField();
             } else {

@@ -20,7 +20,7 @@
     {% set validation %}
         {% if result is iterable and result is not empty and success == true %}
             {% include 'OroImportExportBundle:ImportExport/widget:importValidate.html.twig' ignore missing with result %}
-            <a href="{{ path('synolia_oroneo_import_process', {'processorAlias': result.processorAlias}) }}"
+            <a href="{{ path('synolia_oroneo_import_process', {'processorAlias': result.processorAlias, 'filePath': result.options.filePath}) }}"
                type="button"
                class="btn import-btn icons-holder-text no-hash pull-right">
                <i class="icon-download-alt hide-text">{{ 'synolia.oroneo.import.btn'|trans }}</i>{{ 'synolia.oroneo.import.btn'|trans }}

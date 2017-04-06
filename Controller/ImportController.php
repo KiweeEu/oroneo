@@ -104,6 +104,7 @@ class ImportController extends Controller
     public function importProcessAction($processorAlias, Request $request)
     {
         $jobName = $request->get('importJob', JobExecutor::JOB_IMPORT_FROM_CSV);
+        $filePath = $request->get('filePath');
 
         // Disable DataAudit Listener
         if ($processorAlias == ImportManager::CATEGORY_PROCESSOR
@@ -119,7 +120,7 @@ class ImportController extends Controller
 
         }
 
-        $imporResult = $this->container->get('synolia.oroneo.import.manager')->importExecution($processorAlias, $jobName);
+        $imporResult = $this->container->get('synolia.oroneo.import.manager')->importExecution($processorAlias, $jobName, $filePath);
 
         $this->get('session')->getFlashBag()->add(
             ($imporResult['success']) ? 'success':'error',
